@@ -5,56 +5,62 @@ const weatherBox = document.getElementById("weather-box");
 const cityName = document.getElementById("cityName");
 const temp = document.getElementById("temp");
 const description = document.getElementById("description");
-const weatherIcon = document.getElementById("weatherIcon");
 const humidity = document.getElementById("humidity");
 const wind = document.getElementById("wind");
+const weatherIcon = document.getElementById("weatherIcon");
 
 async function getWeather() {
   try {
-    if (!cityInput.value) {
-      alert("Molim upiši naziv grada!");
+    const city = cityInput.value.trim();
+    if (!city) {
+      alert("Upiši naziv grada");
       return;
     }
 
     weatherBox.style.display = "none";
 
-    const grad = cityInput.value;
+    // 1) GEOLOKACIJA GRADA
+    const geoResponse = await fetch(
+      `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=hr`,
+    );
+    const geoData = await geoResponse.json();
 
-    const url = `https://wttr.in/${grad}?format=j1`;
-
-    console.log("URL:", url);
-
-    const izvor = await fetch(url);
-    const podatci = await izvor.json();
-
-    console.log("Podatci:", podatci);
-
-    if (!podatci.current_condition || podatci.current_condition.length === 0) {
-      alert("Grad nije pronađen!");
+    if (!geoData.results || geoData.results.length === 0) {
+      alert("Grad nije pronađen");
       return;
     }
 
-    const trenutno = podatci.current_condition[0];
-    const lokacija = podatci.nearest_area[0];
+    const location = geoData.results[0];
 
-    cityName.innerHTML = lokacija.areaName[0].value;
-    temp.innerHTML = `${trenutno.temp_C}°C`;
-    description.innerHTML = trenutno.weatherDesc[0].value;
-    weatherIcon.src = trenutno.weatherIconUrl[0].value;
-    humidity.innerHTML = `${trenutno.humidity}%`;
-    wind.innerHTML = `${trenutno.windspeedKmph} km/h`;
+    // 2) VREMENSKI PODACI (UKLJUČUJU VLAGU)
+    const weatherResponse = await fetch(
+      `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true&hourly=relativehumidity_2m`,
+    );
+    const weatherData = await weatherResponse.json();
+
+    const current = weatherData.current_weather;
+    const humidityNow = weatherData.hourly.relativehumidity_2m[0];
+
+    // 3) ISPIS PODATAKA
+    cityName.textContent = location.name;
+    temp.textContent = `${current.temperature}°C`;
+    description.textContent = "Trenutno vrijeme";
+    humidity.textContent = `${humidityNow}%`;
+    wind.textContent = `${current.windspeed} km/h`;
+
+    weatherIcon.src = "https://cdn-icons-png.flaticon.com/512/1116/1116453.png";
 
     weatherBox.style.display = "block";
     cityInput.value = "";
   } catch (error) {
-    console.log("Greška:", error);
-    alert("Došlo je do greške. Pokušaj ponovo.");
+    console.error(error);
+    alert("Greška pri dohvaćanju podataka");
   }
 }
 
 searchBtn.addEventListener("click", getWeather);
 
-cityInput.addEventListener("keypress", function (e) {
+cityInput.addEventListener("keydown", (e) => {
   if (e.key === "Enter") {
     getWeather();
   }
