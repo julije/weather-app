@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="hr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Weather App</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h1>⛅ Weather Dashboard</h1>
+
+    <div>
+      <input type="text" id="cityInput" placeholder="Upiši grad..." />
+      <button id="searchBtn">Provjeri</button>
+    </div>
+
+    <div id="weather-box" style="display: none">
+      <h2 id="cityName"></h2>
+      <div id="temp"></div>
+      <div id="description"></div>
+      <img id="weatherIcon" src="" alt="" />
+
+      <div class="details">
+        <div class="detail-item">
+          <p>💧 Vlaga</p>
+          <p id="humidity"></p>
+        </div>
+        <div class="detail-item">
+          <p>💨 Vjetar</p>
+          <p id="wind"></p>
+        </div>
+      </div>
+    </div>
+    <div id="history" style="margin-top: 30px; display: none">
+      <h3>Nedavno pretraživani gradovi:</h3>
+      <div
+        id="historyList"
+        style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap"
+      ></div>
+    </div>
+    <script src="app.js"></script>
+  </body>
+</html>
