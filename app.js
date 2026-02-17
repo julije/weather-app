@@ -19,7 +19,6 @@ async function getWeather() {
 
     weatherBox.style.display = "none";
 
-    // 1) GEOLOKACIJA GRADA
     const geoResponse = await fetch(
       `https://geocoding-api.open-meteo.com/v1/search?name=${city}&count=1&language=hr`,
     );
@@ -32,7 +31,6 @@ async function getWeather() {
 
     const location = geoData.results[0];
 
-    // 2) VREMENSKI PODACI (UKLJUČUJU VLAGU)
     const weatherResponse = await fetch(
       `https://api.open-meteo.com/v1/forecast?latitude=${location.latitude}&longitude=${location.longitude}&current_weather=true&hourly=relativehumidity_2m`,
     );
@@ -41,7 +39,6 @@ async function getWeather() {
     const current = weatherData.current_weather;
     const humidityNow = weatherData.hourly.relativehumidity_2m[0];
 
-    // 3) ISPIS PODATAKA
     cityName.textContent = location.name;
     temp.textContent = `${current.temperature}°C`;
     description.textContent = "Trenutno vrijeme";
