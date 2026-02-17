@@ -4,7 +4,7 @@ A responsive weather application built with vanilla JavaScript that provides rea
 
 ## 🌐 Live Demo
 
-> _[Add GitHub Pages link here once deployed]_
+> https://julije.github.io/weather-app/
 
 ## ✨ Features
 
